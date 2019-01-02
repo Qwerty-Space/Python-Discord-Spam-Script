@@ -9,10 +9,10 @@ Rewritten version of [Discord-Spam-Script](https://github.com/Qwerty-Space/Disco
 ---
 
 ### What does it do?
-This script will send a message every 8 milliseconds for a total of 9 messages.  Then it will wait 5 seconds and start again.  
+This script will send a message every 800 milliseconds for a total of 9 messages.  Then it will wait 5 seconds and start again.  
 
 ### How do I make it say something else?
-Change `:smiley:` on [line 11](discord_spam_script.py#L11) to something else.  Open an issue, or PM me on Discord/Telegram if you know me on there and would like some help.
+Change `:smiley:` on [line 9](discord_spam_script.py#L11) to something else.  Open an issue, or PM me on Discord/Telegram if you know me on there and would like some help.
 
 ### How do I use it?
 * Install python
