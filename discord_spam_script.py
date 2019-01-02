@@ -4,28 +4,38 @@ import logging
 import threading
 import keyboard as k
 
-logging.basicConfig(level=logging.INFO)
+
 should_spam = False
 
+# Config
+message_text = ":smiley:" # Text to send.  Default: ":smiley:"
+msg_time = 0.8 # Time between messages (seconds).  Default: 0.8
+wait_time = 5 # Time to wait between each run (seconds).  Default: 5
+logging.basicConfig(level=logging.INFO) # Logging level.  Default: INFO
+
+
 def spam():
+    """Checks whether it should spam, and spams."""
     logging.debug("Spam thread started")
     while True:
         while should_spam:
             for _ in range(9):
-                k.write(":smiley:", 0.02)
+                k.write(message_text, 0.02)
                 k.send("enter")
-                time.sleep(0.8)
+                time.sleep(msg_time)
                 if not should_spam:
                     break
-            time.sleep(5)
+            time.sleep(wait_time)
         time.sleep(1)
 
 def main():
+    """Toggles the spam switch."""
     global should_spam
     should_spam = not should_spam
     print(f"Spamming:  {should_spam}")
 
 def cancel():
+    """Stops spamming, and kills the process."""
     global should_spam
     should_spam = False
     print("Exiting in 3 seconds...")
