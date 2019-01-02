@@ -1,11 +1,9 @@
-import os
-import time
+import asyncio
 import logging
-import threading
 import keyboard as k
 
-
-should_spam = False
+running = True
+spam_task = None
 
 # Config
 message_text = ":smiley:" # Text to send.  Default: ":smiley:"
@@ -14,46 +12,45 @@ wait_time = 5 # Time to wait between each run (seconds).  Default: 5
 logging.basicConfig(level=logging.INFO) # Logging level.  Default: INFO
 
 
-def spam():
-    """Checks whether it should spam, and spams."""
-    logging.debug("Spam thread started")
+async def spam():
+    """Spams in a loop"""
+    logging.debug("Spam task started")
     while True:
-        while should_spam:
-            for _ in range(9):
-                k.write(message_text, 0.02)
-                k.send("enter")
-                time.sleep(msg_time)
-                if not should_spam:
-                    break
-            if not should_spam:
-                break
-            time.sleep(wait_time)
-        time.sleep(1)
+        for _ in range(9):
+            k.write(message_text, 0.02)
+            k.send("enter")
+            await asyncio.sleep(msg_time)
+        await asyncio.sleep(wait_time)
 
-def main():
-    """Toggles the spam switch."""
-    global should_spam
-    should_spam = not should_spam
-    print(f"Spamming:  {should_spam}")
+
+def toggle_spam(loop):
+    """Starts or cancels the spamming task"""
+    global spam_task
+    if spam_task:
+        spam_task.cancel()
+        spam_task = None
+    else:
+        spam_task = loop.create_task(spam())
+    logging.info(f"Spamming:  {spam_task is not None}")
+
 
 def cancel():
-    """Stops spamming, and kills the process."""
-    global should_spam
-    should_spam = False
-    print("Exiting in 3 seconds...")
-    time.sleep(3)
-    os._exit(1)
+    """Sets the running flag to False, so main() knows that it should exit"""
+    global running
+    running = False
+    logging.info("Exiting...")
 
 
-spam_thread = threading.Thread(target=spam)
+async def main():
+    """Loops until the running flag is set to False"""
+    while running:
+        await asyncio.sleep(0.1)
+
 
 if __name__ == "__main__":
     print("Welcome to the Discord Spam Script.\nPress <F3> to toggle spamming, and <F4> to exit.")
     print("Source code:  https://github.com/Qwerty-Space/Python-Discord-Spam-Script")
-    k.add_hotkey("F3", main)
+    event_loop = asyncio.get_event_loop()
+    k.add_hotkey("F3", toggle_spam, args=(event_loop,))
     k.add_hotkey("F4", cancel)
-    if not spam_thread.is_alive():
-        logging.debug("Starting the spam thread")
-        spam_thread.start()
-    while True:
-        time.sleep(1)
+    event_loop.run_until_complete(main())
