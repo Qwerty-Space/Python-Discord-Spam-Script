@@ -48,7 +48,8 @@ def cancel():
 spam_thread = threading.Thread(target=spam)
 
 if __name__ == "__main__":
-    print("Welcome to the Discord Spam Script.\nPress <F3> to toggle spamming, and <F4> to exit.\n\n")
+    print("Welcome to the Discord Spam Script.\nPress <F3> to toggle spamming, and <F4> to exit.")
+    print("Source code:  https://github.com/Qwerty-Space/Python-Discord-Spam-Script")
     k.add_hotkey("F3", main)
     k.add_hotkey("F4", cancel)
     if not spam_thread.is_alive():
