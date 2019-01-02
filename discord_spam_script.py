@@ -25,6 +25,8 @@ def spam():
                 time.sleep(msg_time)
                 if not should_spam:
                     break
+            if not should_spam:
+                break
             time.sleep(wait_time)
         time.sleep(1)
 
